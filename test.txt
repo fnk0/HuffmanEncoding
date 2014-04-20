@@ -1,0 +1,20 @@
+This is a test file to be encrypted!
+Reading the file as it is supposed to be!!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Hello World!!
+Cool!                                                            Did I got tabs? "!"
