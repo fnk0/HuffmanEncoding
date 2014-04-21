@@ -21,7 +21,16 @@ public class HuffmanTree implements Runnable, Serializable{
     private HashMap<Byte, Node> byteNodeHashMap;
     private Node rootNode;
     private byte[] byteArray;
+    private String bitString;
+    private List<Integer> binaryList;
 
+    public HuffmanTree() {
+    }
+
+    /**
+     *
+     * @param byteNodeHashMap
+     */
     public HuffmanTree(HashMap<Byte, Node> byteNodeHashMap) {
         this.byteNodeHashMap = byteNodeHashMap;
         priorityQueue = new PriorityQueue<Node>();
@@ -34,14 +43,25 @@ public class HuffmanTree implements Runnable, Serializable{
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public PriorityQueue<Node> getPriorityQueue() {
         return priorityQueue;
     }
 
+    /**
+     *
+     * @param priorityQueue
+     */
     public void setPriorityQueue(PriorityQueue<Node> priorityQueue) {
         this.priorityQueue = priorityQueue;
     }
 
+    /**
+     *
+     */
     @Override
     public void run() {
         while (priorityQueue.size() > 1) {
@@ -68,21 +88,19 @@ public class HuffmanTree implements Runnable, Serializable{
         }
         rootNode = priorityQueue.remove();
         rootNode.setParentNode(null);
-
-        String bitString = "";
-        String trial = "";
+        bitString = "";
 
         for(byte b : byteArray) {
             Node node = byteNodeHashMap.get(b);
             bitString += getBinaryString(node, "");
         }
 
-        List<Integer> list = getBitString(bitString);
-        //System.out.println(getBitString(trial));
+            //Debugging print outs.
+            List<Integer> list = getBitString(bitString);
+            System.out.println("Original String: " + bitString);
+            System.out.println("Decoded String:  " + fromBitToByte(list));
+            printBinaryTree(rootNode, 0);
 
-        System.out.println("Original String: " + bitString);
-        System.out.println("Decoded String:  " + fromBitToByte(list));
-        printBinaryTree(rootNode, 0);
     }
 
     /**
@@ -108,6 +126,12 @@ public class HuffmanTree implements Runnable, Serializable{
         printBinaryTree(root.getZeroNode(), level+1);
     }
 
+    /**
+     *
+     * @param node
+     * @param bitString
+     * @return
+     */
     public String getBinaryString(Node node, String bitString) {
 
         if(node.getParentNode() == null) {
@@ -123,6 +147,11 @@ public class HuffmanTree implements Runnable, Serializable{
         }
     }
 
+    /**
+     *
+     * @param binaryString
+     * @return
+     */
     public List<Integer> getBitString(String binaryString) {
         int counter = 0;
 
@@ -135,11 +164,32 @@ public class HuffmanTree implements Runnable, Serializable{
         return Twiddle.bytesToBits(rawBytes);
     }
 
+    /**
+     *
+     * @param list
+     * @return
+     */
     public String fromBitToByte(List<Integer> list) {
         return new String(Twiddle.bitsToBytes(list));
     }
 
+    /**
+     *
+     * @param byteArray
+     */
     public void setByteArray(byte[] byteArray) {
         this.byteArray = byteArray;
+    }
+
+    public String getBitString() {
+        return bitString;
+    }
+
+    public Node getRootNode() {
+        return rootNode;
+    }
+
+    public List<Integer> getBinaryList() {
+        return getBitString(bitString);
     }
 }

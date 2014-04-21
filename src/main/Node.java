@@ -70,10 +70,6 @@ public class Node implements Comparable<Node>, Serializable {
         return frequency;
     }
 
-    public void setFrequency(int frequency) {
-        this.frequency = frequency;
-    }
-
     public int getNodeValue() {
         return nodeValue;
     }

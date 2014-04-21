@@ -1,8 +1,6 @@
 package main;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -21,41 +19,74 @@ public class Encode {
     private byte[] byteStream;
     private ArrayList<Node> nodes;
     private HashMap<Byte, Node> nodeByteHashMap;
+    private HuffmanTree huffTree;
 
-    public Encode() {
-    }
+    /**
+     *
+     */
+    public Encode() {}
 
+    /**
+     *
+     * @param filename
+     */
     public Encode(String filename) {
         this.filename = filename;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getFilename() {
         return filename;
     }
 
+    /**
+     *
+     * @param filename
+     */
     public void setFilename(String filename) {
         this.filename = filename;
     }
 
-    public void encodeFile() throws FileNotFoundException, IOException{
-
+    /**
+     *
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
+    public void encodeFile() throws FileNotFoundException, IOException {
         fileStream = new FileInputStream(filename);
-        byteStream = new byte[getStreamSize()];
-
-
+        streamSize = getStreamSize();
+        byteStream = new byte[streamSize];
         fileStream.read(byteStream);
-
         read(byteStream);
 
+        ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(filename + ".huff"));
+        /*
+            Write Sequence:
+            1: Numbers of Characters
+            2: Huffman Tree
+            3: Bit List
+            4: Byte, Node - HashMap
+         */
+        out.writeObject(streamSize);
+        out.writeObject(huffTree.getRootNode());
+        out.writeObject(huffTree.getBitString());
+        //out.writeObject(nodeByteHashMap);
+        out.flush();
+        out.close();
     }
 
+    /**
+     *
+     * @param bytes
+     */
     public void read(byte[] bytes) {
-
         ArrayList<Byte> bytesRead = new ArrayList<Byte>();
         nodeByteHashMap = new HashMap<Byte, Node>();
         nodes = new ArrayList<Node>();
         int counter = 0;
-
         for(int i = 0; i < bytes.length; i++) {
             if(!bytesRead.contains(bytes[i])) {
                 byte b = bytes[i];
@@ -68,15 +99,16 @@ public class Encode {
                 counter = 0;
             }
         }
-
-        HuffmanTree huffTree = new HuffmanTree(nodeByteHashMap);
+        huffTree = new HuffmanTree(nodeByteHashMap);
         huffTree.setByteArray(byteStream);
         huffTree.run();
-
     }
 
+    /**
+     *
+     * @return
+     */
     public int getStreamSize() {
-
         if(fileStream != null) {
             try {
                 return fileStream.available();
