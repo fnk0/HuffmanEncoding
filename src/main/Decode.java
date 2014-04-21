@@ -1,9 +1,6 @@
 package main;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.ObjectInputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,32 +39,38 @@ public class Decode {
             Read Sequence:
             1: Numbers of Characters (Integer)
             2: Huffman Tree (Node)
-            3: Bit List (List<Integer>)
-            4: Byte, Node - HashMap (HashMap<Byte, Node>);
+            3: Byte array.
          */
-        Object one = null;
-        Object two = null;
+        Object one;
+        Object two;
         Object three = null;
-        //Object four = null;
+
         Node rootNode = null;
         int expectedChars = 0;
-        List<Integer> bitList = null;
         try {
             one = input.readObject();
             two = input.readObject();
             three = input.readObject();
-            //four = input.readObject();
             expectedChars = (Integer) one;
             rootNode = (Node) two;
-            bitList = (List<Integer>) three;
+
         } catch (ClassNotFoundException ex) {
+
+        } catch (OptionalDataException ex) {
 
         }
 
         HuffmanTree tree = new HuffmanTree();
         tree.printBinaryTree(rootNode, 0);
+        byte[] byteArray = (byte[]) three;
 
         System.out.println(expectedChars);
-        System.out.println(bitList);
+
+        List<Integer> byteList = Twiddle.bytesToBits(byteArray);
+
+        for(int i : byteList) {
+            System.out.print(i);
+        }
+
     }
 }

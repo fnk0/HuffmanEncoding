@@ -61,19 +61,16 @@ public class Encode {
         byteStream = new byte[streamSize];
         fileStream.read(byteStream);
         read(byteStream);
-
         ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(filename + ".huff"));
         /*
             Write Sequence:
             1: Numbers of Characters
             2: Huffman Tree
-            3: Bit List
-            4: Byte, Node - HashMap
+            3: Byte Array
          */
         out.writeObject(streamSize);
         out.writeObject(huffTree.getRootNode());
-        out.writeObject(huffTree.getBitString());
-        //out.writeObject(nodeByteHashMap);
+        out.writeObject(Twiddle.bitsToBytes(huffTree.getBinaryList()));
         out.flush();
         out.close();
     }

@@ -2,11 +2,7 @@ package main;
 
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.PriorityQueue;
-import java.util.Set;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by marcus on 4/19/14.
@@ -24,8 +20,7 @@ public class HuffmanTree implements Runnable, Serializable{
     private String bitString;
     private List<Integer> binaryList;
 
-    public HuffmanTree() {
-    }
+    public HuffmanTree() {}
 
     /**
      *
@@ -94,13 +89,7 @@ public class HuffmanTree implements Runnable, Serializable{
             Node node = byteNodeHashMap.get(b);
             bitString += getBinaryString(node, "");
         }
-
-            //Debugging print outs.
-            List<Integer> list = getBitString(bitString);
-            System.out.println("Original String: " + bitString);
-            System.out.println("Decoded String:  " + fromBitToByte(list));
-            printBinaryTree(rootNode, 0);
-
+        //printBinaryTree(rootNode, 0);
     }
 
     /**
@@ -133,7 +122,6 @@ public class HuffmanTree implements Runnable, Serializable{
      * @return
      */
     public String getBinaryString(Node node, String bitString) {
-
         if(node.getParentNode() == null) {
             return bitString;
         } else if(node.getNodeValue() == 1) {
@@ -153,24 +141,11 @@ public class HuffmanTree implements Runnable, Serializable{
      * @return
      */
     public List<Integer> getBitString(String binaryString) {
-        int counter = 0;
-
-        while (binaryString.length() % 8 != 0) {
-            binaryString = binaryString + 0;
-            counter++;
+        List<Integer> list = new ArrayList<Integer>();
+        for(int i = 0; i < binaryString.length(); i++) {
+            list.add((int) binaryString.charAt(i));
         }
-
-        byte[] rawBytes = binaryString.getBytes();
-        return Twiddle.bytesToBits(rawBytes);
-    }
-
-    /**
-     *
-     * @param list
-     * @return
-     */
-    public String fromBitToByte(List<Integer> list) {
-        return new String(Twiddle.bitsToBytes(list));
+        return list;
     }
 
     /**
@@ -181,15 +156,22 @@ public class HuffmanTree implements Runnable, Serializable{
         this.byteArray = byteArray;
     }
 
-    public String getBitString() {
-        return bitString;
-    }
-
+    /**
+     *
+     * @return
+     */
     public Node getRootNode() {
         return rootNode;
     }
 
+    /**
+     *
+     * @return
+     */
     public List<Integer> getBinaryList() {
+
         return getBitString(bitString);
     }
+
+
 }
