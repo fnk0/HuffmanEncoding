@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.PriorityQueue;
 import java.util.Set;
+import java.util.List;
 
 /**
  * Created by marcus on 4/19/14.
@@ -16,13 +17,15 @@ import java.util.Set;
 
 public class HuffmanTree implements Runnable, Serializable{
 
-    PriorityQueue<Node> priorityQueue;
-    HashMap<Byte, Node> byteNodeHashMap;
+    private PriorityQueue<Node> priorityQueue;
+    private HashMap<Byte, Node> byteNodeHashMap;
+    private Node rootNode;
+    private byte[] byteArray;
 
     public HuffmanTree(HashMap<Byte, Node> byteNodeHashMap) {
         this.byteNodeHashMap = byteNodeHashMap;
         priorityQueue = new PriorityQueue<Node>();
-        Set bytes = byteNodeHashMap.keySet();
+        Set bytes = this.byteNodeHashMap.keySet();
         Iterator i = bytes.iterator();
 
         while(i.hasNext()) {
@@ -43,7 +46,7 @@ public class HuffmanTree implements Runnable, Serializable{
     public void run() {
         while (priorityQueue.size() > 1) {
             Node newNode;
-            Node leftNode = priorityQueue.poll();
+            Node leftNode = priorityQueue.remove();
 
             if(priorityQueue.size() > 0) {
                 Node rightNode = priorityQueue.remove();
@@ -63,75 +66,80 @@ public class HuffmanTree implements Runnable, Serializable{
             }
             priorityQueue.add(newNode);
         }
-        Node node = priorityQueue.remove();
-        node.setParentNode(null);
-        node = createTree(node);
+        rootNode = priorityQueue.remove();
+        rootNode.setParentNode(null);
 
-        printBinaryTree(node, 0);
+        String bitString = "";
+        String trial = "";
+
+        for(byte b : byteArray) {
+            Node node = byteNodeHashMap.get(b);
+            bitString += getBinaryString(node, "");
+        }
+
+        List<Integer> list = getBitString(bitString);
+        //System.out.println(getBitString(trial));
+
+        System.out.println("Original String: " + bitString);
+        System.out.println("Decoded String:  " + fromBitToByte(list));
+        printBinaryTree(rootNode, 0);
     }
 
     /**
-     *
-     * @param node
-     * @return
-     */
-    public Node createTree(Node node) {
-        //setNodeParents(node);
-        return node;
-    }
-
-    /*
-    public void setNodeParents(Node node) {
-        if(node.getZeroNode() != null) {
-            node.getZeroNode().setParentNode(node);
-            //System.out.print("Node: " + node + " -> Parent: " + node.getParentNode() + "\n");
-            setNodeParents(node.getZeroNode());
-        }
-        if(node.getOneNode() != null) {
-            node.getOneNode().setParentNode(node);
-            //System.out.print("Node: " + node + " -> Parent: " + node.getParentNode() + "\n");
-            setNodeParents(node.getOneNode());
-        }
-    }
-    */
-
-    /**
-     * Recursively prints the binary tree for debugging purposes
+     * Recursively prints the binary tree using an in order traversal algorithm. Used for debugging purposes
      * @param root
      *              the root tree
      * @param level
      *              the current level in the tree
      */
     public void printBinaryTree(Node root, int level){
-        if(root==null)
+        if(root == null) {
             return;
-        printBinaryTree(root.getOneNode(), level+1);
-        if(level!=0){
-            for(int i=0;i<level-1;i++)
-                System.out.print("|\t");
-            System.out.println("|-------" + root.getFrequency() + " V: [" + root.getValue() + "]");
         }
-        else
+        printBinaryTree(root.getOneNode(), level + 1);
+        if(level != 0) {
+            for(int i = 0; i < level - 1;i++) {
+                System.out.print("|\t");
+            }
+            System.out.println("|-------" + root.getFrequency() + " V: [" + root.getValue() + "]  -- Child Value: " + root.getNodeValue());
+        } else {
             System.out.println(root.getFrequency());
+        }
         printBinaryTree(root.getZeroNode(), level+1);
     }
 
-    public String createBinaryString(Node root, int level) {
-        String binaryString = "";
-        if(root==null) {
-            return binaryString;
-        }
-        createBinaryString(root.getOneNode(), level+1);
-        if(level!=0) {
-            for(int i=0;i<level-1;i++)
-                System.out.print("|\t");
-            System.out.println("|-------" + root.getFrequency() + " V: [" + root.getValue() + "]");
-        }  else {
-            System.out.println(root.getFrequency());
-        }
-        createBinaryString(root.getZeroNode(), level+1);
+    public String getBinaryString(Node node, String bitString) {
 
-        return binaryString;
+        if(node.getParentNode() == null) {
+            return bitString;
+        } else if(node.getNodeValue() == 1) {
+            bitString = 1 + bitString;
+            return getBinaryString(node.getParentNode(), bitString);
+        } else if(node.getNodeValue() == 0) {
+            bitString = 0 + bitString;
+            return getBinaryString(node.getParentNode(), bitString);
+        } else {
+            return bitString;
+        }
     }
 
+    public List<Integer> getBitString(String binaryString) {
+        int counter = 0;
+
+        while (binaryString.length() % 8 != 0) {
+            binaryString = binaryString + 0;
+            counter++;
+        }
+
+        byte[] rawBytes = binaryString.getBytes();
+        return Twiddle.bytesToBits(rawBytes);
+    }
+
+    public String fromBitToByte(List<Integer> list) {
+        return new String(Twiddle.bitsToBytes(list));
+    }
+
+    public void setByteArray(byte[] byteArray) {
+        this.byteArray = byteArray;
+    }
 }

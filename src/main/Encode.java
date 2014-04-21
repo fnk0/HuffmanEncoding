@@ -70,6 +70,7 @@ public class Encode {
         }
 
         HuffmanTree huffTree = new HuffmanTree(nodeByteHashMap);
+        huffTree.setByteArray(byteStream);
         huffTree.run();
 
     }
