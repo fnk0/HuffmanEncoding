@@ -52,7 +52,7 @@ public class Decode {
             expectedChars = (Integer) one;
             rootNode = (Node) two;
            int counter = 0;
-           byteArray = new byte[input.available()];
+           byteArray = new byte[expectedChars];
            //System.out.println("Available: " + input.available());
            while (input.available() > 0) {
                byteArray[counter] = input.readByte();
@@ -63,9 +63,6 @@ public class Decode {
 
         huffTree = new HuffmanTree();
         List<Integer> byteList = Twiddle.bytesToBits(byteArray);
-
-
-        huffTree.decodeByteArray(expectedChars, rootNode, byteList);
 
         /*
         // Debugging Statements
@@ -81,5 +78,11 @@ public class Decode {
             System.out.print(i);
         }
         */
+
+        OutputStream out = new FileOutputStream("decoded_" + filename.replaceAll(".huff", ""));
+        out.write(huffTree.decodeByteArray(expectedChars, rootNode, byteList).getBytes());
+        out.flush();
+        out.close();
+
     }
 }

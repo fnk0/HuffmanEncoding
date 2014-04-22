@@ -18,18 +18,29 @@ public class Puff {
 
         if(args.length == 1) {
             filename = args[0];
-            System.out.println(filename);
-            decode = new Decode(filename);
+            if(filename.contains(".huff")) {
+                System.out.println("Decoding... " + filename);
+                decode = new Decode(filename);
+            } else {
+                exitProgram();
+            }
         } else {
-            System.out.println("Please provide a file to Decode with a .huff extension.");
-            System.out.println("Usage: Huff <fileToDecode>");
-            System.exit(10);
+           exitProgram();
         }
-
         try {
-            decode.decodeFile();
+            if(decode != null) {
+                decode.decodeFile();
+            } else {
+                exitProgram();
+            }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("File Not found! Please specify a correct file to decode.");
         }
+    }
+
+    public static void exitProgram() {
+        System.out.println("Please provide a file to Decode with a .huff extension.");
+        System.out.println("Usage: Huff <fileToDecode>");
+        System.exit(10);
     }
 }
