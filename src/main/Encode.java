@@ -70,7 +70,7 @@ public class Encode {
          */
         out.writeObject(streamSize);
         out.writeObject(huffTree.getRootNode());
-        out.writeObject(Twiddle.bitsToBytes(huffTree.getBinaryList()));
+        out.write(Twiddle.bitsToBytes(huffTree.getBinaryList()));
         out.flush();
         out.close();
     }

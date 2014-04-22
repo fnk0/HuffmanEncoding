@@ -18,6 +18,7 @@ public class Puff {
 
         if(args.length == 1) {
             filename = args[0];
+            System.out.println(filename);
             decode = new Decode(filename);
         } else {
             System.out.println("Please provide a file to Decode with a .huff extension.");

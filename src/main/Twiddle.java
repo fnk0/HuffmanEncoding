@@ -14,15 +14,11 @@ public class Twiddle {
     public static byte[] bitsToBytes(List<Integer> l) {
         byte[] toReturn = new byte[l.size() / 8];
         int index = 0;
-        try {
-            for (int i = 0; i < l.size(); i += 8) {
-                for (int j = 0; j < 8; j++) {
-                    toReturn[index] = (byte) (toReturn[index] | (l.get(i + j) << (7 - j)));
-                }
-                index++;
+        for (int i = 0; i < l.size(); i += 8) {
+            for (int j = 0; j < 8; j++) {
+                toReturn[index] = (byte) (toReturn[index] | (l.get(i + j) << (7 - j)));
             }
-        } catch (ArrayIndexOutOfBoundsException ex) {
-
+            index++;
         }
         return toReturn;
     }

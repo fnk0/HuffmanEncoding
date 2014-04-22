@@ -19,6 +19,7 @@ public class HuffmanTree implements Runnable, Serializable{
     private byte[] byteArray;
     private String bitString;
     private List<Integer> binaryList;
+    private int decodeCounter = 0;
 
     public HuffmanTree() {}
 
@@ -89,7 +90,14 @@ public class HuffmanTree implements Runnable, Serializable{
             Node node = byteNodeHashMap.get(b);
             bitString += getBinaryString(node, "");
         }
-        //printBinaryTree(rootNode, 0);
+        System.out.println(bitString);
+        System.out.println(getBitString(bitString));
+        for(byte b : Twiddle.bitsToBytes(getBitString(bitString))) {
+            System.out.print(b + " ");
+        }
+
+        System.out.print(" \n" + Twiddle.bytesToBits(Twiddle.bitsToBytes(getBitString(bitString))));
+        printBinaryTree(rootNode, 0);
     }
 
     /**
@@ -141,9 +149,14 @@ public class HuffmanTree implements Runnable, Serializable{
      * @return
      */
     public List<Integer> getBitString(String binaryString) {
+
+        while (binaryString.length() % 8 != 0) {
+            binaryString += 0;
+        }
+
         List<Integer> list = new ArrayList<Integer>();
         for(int i = 0; i < binaryString.length(); i++) {
-            list.add((int) binaryString.charAt(i));
+            list.add(Integer.parseInt("" + binaryString.charAt(i)));
         }
         return list;
     }
@@ -173,5 +186,30 @@ public class HuffmanTree implements Runnable, Serializable{
         return getBitString(bitString);
     }
 
+    public String decodeByteArray(int expectChars, Node rootNode, List<Integer> bits) {
 
+        String decodedString = "";
+        for(int i = 0; i < expectChars; i++) {
+           char c = (char) getNodeValue(rootNode, bits, decodeCounter);
+           decodedString += c;
+           //System.out.print(c);
+        }
+        System.out.println(decodedString);
+        return decodedString;
+    }
+
+    public byte getNodeValue(Node node, List<Integer> bits, int position) {
+
+        if(node.getValue() != 0) {
+            return node.getValue();
+        } else if(bits.get(position) == 0) {
+            decodeCounter++;
+            return getNodeValue(node.getZeroNode(), bits, decodeCounter);
+        } else if(bits.get(position) == 1) {
+            decodeCounter++;
+            return getNodeValue(node.getOneNode(), bits, decodeCounter);
+        } else {
+            return node.getValue();
+        }
+     }
 }

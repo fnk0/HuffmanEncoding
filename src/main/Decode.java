@@ -43,34 +43,43 @@ public class Decode {
          */
         Object one;
         Object two;
-        Object three = null;
-
         Node rootNode = null;
         int expectedChars = 0;
+        byte[] byteArray = null;
         try {
             one = input.readObject();
             two = input.readObject();
-            three = input.readObject();
             expectedChars = (Integer) one;
             rootNode = (Node) two;
+           int counter = 0;
+           byteArray = new byte[input.available()];
+           //System.out.println("Available: " + input.available());
+           while (input.available() > 0) {
+               byteArray[counter] = input.readByte();
+               //System.out.print(byteArray[counter]);
+               counter++;
+           }
+        } catch (ClassNotFoundException ex) {}
 
-        } catch (ClassNotFoundException ex) {
-
-        } catch (OptionalDataException ex) {
-
-        }
-
-        HuffmanTree tree = new HuffmanTree();
-        tree.printBinaryTree(rootNode, 0);
-        byte[] byteArray = (byte[]) three;
-
-        System.out.println(expectedChars);
-
+        huffTree = new HuffmanTree();
         List<Integer> byteList = Twiddle.bytesToBits(byteArray);
 
-        for(int i : byteList) {
+
+        huffTree.decodeByteArray(expectedChars, rootNode, byteList);
+
+        /*
+        // Debugging Statements
+        System.out.println("\n Expected Chars: " + expectedChars);
+        System.out.println("Byte Array");
+        for(byte b : byteArray) {
+            System.out.print(b);
+        }
+        System.out.println();
+
+        System.out.println("Byte List");
+        for(Integer i : byteList) {
             System.out.print(i);
         }
-
+        */
     }
 }
