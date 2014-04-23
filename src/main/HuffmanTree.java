@@ -18,14 +18,14 @@ public class HuffmanTree implements Runnable, Serializable{
     private Node rootNode;
     private byte[] byteArray;
     private String bitString;
-    private List<Integer> binaryList;
     private int decodeCounter = 0;
 
     public HuffmanTree() {}
 
     /**
-     *
+     * Constructor of the Huffman Tree
      * @param byteNodeHashMap
+     *                      The HashMap containing the frequency for each node.
      */
     public HuffmanTree(HashMap<Byte, Node> byteNodeHashMap) {
         this.byteNodeHashMap = byteNodeHashMap;
@@ -40,23 +40,7 @@ public class HuffmanTree implements Runnable, Serializable{
     }
 
     /**
-     *
-     * @return
-     */
-    public PriorityQueue<Node> getPriorityQueue() {
-        return priorityQueue;
-    }
-
-    /**
-     *
-     * @param priorityQueue
-     */
-    public void setPriorityQueue(PriorityQueue<Node> priorityQueue) {
-        this.priorityQueue = priorityQueue;
-    }
-
-    /**
-     *
+     * Executes the Huffman Tree method.
      */
     @Override
     public void run() {
@@ -85,22 +69,10 @@ public class HuffmanTree implements Runnable, Serializable{
         rootNode = priorityQueue.remove();
         rootNode.setParentNode(null);
         bitString = "";
-
         for(byte b : byteArray) {
             Node node = byteNodeHashMap.get(b);
             bitString += getBinaryString(node, "");
         }
-        /*
-        // Debugging print outs
-        System.out.println(bitString);
-        System.out.println(getBitString(bitString));
-        for(byte b : Twiddle.bitsToBytes(getBitString(bitString))) {
-            System.out.print(b + " ");
-        }
-
-        System.out.print(" \n" + Twiddle.bytesToBits(Twiddle.bitsToBytes(getBitString(bitString))));
-        printBinaryTree(rootNode, 0);
-        */
     }
 
     /**
@@ -127,10 +99,13 @@ public class HuffmanTree implements Runnable, Serializable{
     }
 
     /**
-     *
-     * @param node
+     * Method to get the binary String of each leaf.
+     * @param node The current node to be executed
      * @param bitString
+     *                  The string to start with is always an empty string
+     *                  Each recursive calls apends to the new 0 or 1 to the beginning.
      * @return
+     *        Returns the final 0-1 string for that node.
      */
     public String getBinaryString(Node node, String bitString) {
         if(node.getParentNode() == null) {
@@ -147,9 +122,11 @@ public class HuffmanTree implements Runnable, Serializable{
     }
 
     /**
-     *
+     * Method to convert the 0 - 1 string to a List.
      * @param binaryString
+     *                    A String full of 0s and 1s
      * @return
+     *          a List<Integer> of 0s and 1s
      */
     public List<Integer> getBitString(String binaryString) {
         while (binaryString.length() % 8 != 0) {
@@ -163,16 +140,18 @@ public class HuffmanTree implements Runnable, Serializable{
     }
 
     /**
-     *
+     * Sets the byteArray
      * @param byteArray
+     *                  An byteArray
      */
     public void setByteArray(byte[] byteArray) {
         this.byteArray = byteArray;
     }
 
     /**
-     *
+     * Method to get the rootNode of a the three
      * @return
+     *         The root node of this three
      */
     public Node getRootNode() {
         return rootNode;
@@ -187,33 +166,38 @@ public class HuffmanTree implements Runnable, Serializable{
     }
 
     /**
-     *
+     * Decodes the byteArray
      * @param expectChars
+     *                  Number of total chars in this tree
      * @param rootNode
+     *                  The rootNode of this tree
      * @param bits
+     *                  The List<Integer> of bits.
      * @return
+     *
      */
-    public String decodeByteArray(int expectChars, Node rootNode, List<Integer> bits) {
-        String decodedString = "";
+    public byte[] decodeByteArray(int expectChars, Node rootNode, List<Integer> bits) {
+        byte[] decodedFile = new byte[expectChars];
         for(int i = 0; i < expectChars; i++) {
-           char c = (char) getNodeValue(rootNode, bits, decodeCounter);
-           decodedString += c;
-           //System.out.print(c);
+           decodedFile[i] = getNodeValue(rootNode, bits, decodeCounter);
         }
-        //System.out.println(decodedString);
-        return decodedString;
+        return decodedFile;
     }
 
     /**
-     *
+     * Gets the value of a specific node. For decoding
      * @param node
+     *             The node to be decoded
      * @param bits
+     *              List<Integer> of bits
      * @param position
+     *              Current position in the list.
      * @return
+     *        the last byte of that branch.
      */
     public byte getNodeValue(Node node, List<Integer> bits, int position) {
 
-        if(node.getValue() != 0) {
+        if(node.getZeroNode() == null && node.getOneNode() == null) {
             return node.getValue();
         } else if(bits.get(position) == 0) {
             decodeCounter++;

@@ -33,8 +33,13 @@ public class Decode {
     @SuppressWarnings("unchecked")
     public void decodeFile() throws FileNotFoundException, IOException {
         fileStream = new FileInputStream(filename);
-        byteStream = new byte[fileStream.available()];
+        streamSize = fileStream.available();
+        byteStream = new byte[streamSize];
         input = new ObjectInputStream(fileStream);
+
+        Timer timer = new Timer();
+        System.out.println("Starting Huffman Decoding on file... " + filename);
+        timer.start();
         /*
             Read Sequence:
             1: Numbers of Characters (Integer)
@@ -79,10 +84,18 @@ public class Decode {
         }
         */
 
+        byte[] toWriteArray = huffTree.decodeByteArray(expectedChars, rootNode, byteList);
+
+        timer.stop();
+        System.out.println("Decoded Successfully finished in: " + (timer.getRunTime() / 1000) + " seconds.");
+        System.out.println("Writing to disk...  decoded_" + filename);
         OutputStream out = new FileOutputStream("decoded_" + filename.replaceAll(".huff", ""));
-        out.write(huffTree.decodeByteArray(expectedChars, rootNode, byteList).getBytes());
+        out.write(toWriteArray);
         out.flush();
         out.close();
-
+        System.out.println("Done writing. New file created");
+        File newFile = new File("decoded_" + filename.replaceAll(".huff", ""));
+        System.out.println("Original File Size: " + (streamSize / 1000)  + " Kb.");
+        System.out.println("New File Size: " + (newFile.length() / 1000) + " Kb.");
     }
 }

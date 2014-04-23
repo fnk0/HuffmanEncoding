@@ -82,22 +82,6 @@ public class Node implements Comparable<Node>, Serializable {
         return value;
     }
 
-    public void setValue(byte value) {
-        this.value = value;
-    }
-
-    public boolean hasZeroNode() {
-        return !(zeroNode == null);
-    }
-
-    public boolean hasOneNode() {
-        return !(oneNode == null);
-    }
-
-    public boolean isLeafNode() {
-        return getValue() == 0;
-    }
-
     @Override
     public String toString() {
         return "Byte Node: " + getNodeValue() + " Frequency: " + getFrequency();

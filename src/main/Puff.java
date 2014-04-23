@@ -19,7 +19,6 @@ public class Puff {
         if(args.length == 1) {
             filename = args[0];
             if(filename.contains(".huff")) {
-                System.out.println("Decoding... " + filename);
                 decode = new Decode(filename);
             } else {
                 exitProgram();

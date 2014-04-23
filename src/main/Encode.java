@@ -58,6 +58,10 @@ public class Encode {
     public void encodeFile() throws FileNotFoundException, IOException {
         fileStream = new FileInputStream(filename);
         streamSize = getStreamSize();
+        Timer timer = new Timer();
+        System.out.println("Starting Huffman Encoding on file... " + filename);
+        timer.start();
+
         byteStream = new byte[streamSize];
         fileStream.read(byteStream);
         read(byteStream);
@@ -70,9 +74,17 @@ public class Encode {
          */
         out.writeObject(streamSize);
         out.writeObject(huffTree.getRootNode());
-        out.write(Twiddle.bitsToBytes(huffTree.getBinaryList()));
+        byte[] toWriteArray = Twiddle.bitsToBytes(huffTree.getBinaryList());
+        timer.stop();
+        System.out.println("Encoded Successfully finished in: " + (timer.getRunTime() / 1000) + " seconds.");
+        System.out.println("Writing to disk...  " + filename + ".huff");
+        out.write(toWriteArray);
         out.flush();
         out.close();
+        System.out.println("Done writing. New file created");
+        File newFile = new File(filename + ".huff");
+        System.out.println("Original File Size: " + (streamSize / 1000)  + " Kb.");
+        System.out.println("New File Size: " + (newFile.length() / 1000) + " Kb.");
     }
 
     /**
